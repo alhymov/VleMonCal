@@ -1,0 +1,32 @@
+object frmCalendar: TfrmCalendar
+  Left = 0
+  Top = 0
+  BorderIcons = []
+  BorderStyle = bsNone
+  Caption = 'frmCalendar'
+  ClientHeight = 167
+  ClientWidth = 192
+  Color = clBtnFace
+  Font.Charset = DEFAULT_CHARSET
+  Font.Color = clWindowText
+  Font.Height = -11
+  Font.Name = 'Tahoma'
+  Font.Style = []
+  FormStyle = fsStayOnTop
+  KeyPreview = True
+  OldCreateOrder = False
+  OnClose = FormClose
+  OnDeactivate = FormDeactivate
+  OnKeyPress = FormKeyPress
+  PixelsPerInch = 96
+  TextHeight = 13
+  object MonthCalendar1: TMonthCalendar
+    Left = 0
+    Top = 0
+    Width = 162
+    Height = 160
+    Date = 42437.700342337960000000
+    TabOrder = 0
+    TabStop = True
+  end
+end

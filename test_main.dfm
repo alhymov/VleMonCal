@@ -66,9 +66,6 @@ object gsm2gd_main: Tgsm2gd_main
     Height = 97
     Align = alTop
     TabOrder = 1
-    DesignSize = (
-      516
-      97)
     object Label1: TLabel
       AlignWithMargins = True
       Left = 189
@@ -121,7 +118,6 @@ object gsm2gd_main: Tgsm2gd_main
       Width = 150
       Height = 13
       Alignment = taCenter
-      Anchors = [akTop, akRight]
       AutoSize = False
       Caption = 'laVersion'
     end

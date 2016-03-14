@@ -174,6 +174,7 @@ function Restore( AValues: TStrings ): TStrings;
 var
   K: TKey;
 begin
+  Result := AValues;
   if TFile.Exists( IniName ) then
   with TIniFile.Create( IniName ) do
   try

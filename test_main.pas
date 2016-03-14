@@ -24,6 +24,7 @@ type
       Values: TStrings);
     procedure vleEditButtonClick(Sender: TObject);
     procedure Button1Click(Sender: TObject);
+    procedure FormDestroy(Sender: TObject);
   private
     { Private declarations }
   public
@@ -38,7 +39,7 @@ implementation
 {$R *.dfm}
 
 uses
-  uCalendar, uSettings, uWildCards, uGetVersion;
+  uCalendar, uSettings, uWildCards, uGetVersion, uWindowPlacement;
 
 procedure Tgsm2gd_main.Button1Click(Sender: TObject);
 begin
@@ -58,6 +59,7 @@ var
   K: uSettings.TKey;
 begin
   laVersion.Caption :=  'Версия: ' + GetVersionInfoText;
+  uWindowPlacement.Restore( Self );
   for K := Low( TKey ) to High( TKey ) do begin
     vle.Keys[ Integer( K ) ] := uSettings.KeyName[ K ];
     with vle.ItemProps[ Integer( K ) ] do begin
@@ -75,6 +77,11 @@ begin
     end;
   end;
   uSettings.Restore( vle.Strings );
+end;
+
+procedure Tgsm2gd_main.FormDestroy(Sender: TObject);
+begin
+  uWindowPlacement.Store( Self );
 end;
 
 { TValueListEditor }

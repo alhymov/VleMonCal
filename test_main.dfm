@@ -46,7 +46,6 @@ object gsm2gd_main: Tgsm2gd_main
       'x')
     OnEditButtonClick = vleEditButtonClick
     OnGetPickList = vleGetPickList
-    ExplicitLeft = -2
     ColWidths = (
       250
       254)
@@ -67,7 +66,6 @@ object gsm2gd_main: Tgsm2gd_main
     Height = 97
     Align = alTop
     TabOrder = 1
-    ExplicitTop = -3
     DesignSize = (
       516
       97)
@@ -135,8 +133,6 @@ object gsm2gd_main: Tgsm2gd_main
     Height = 38
     Align = alBottom
     TabOrder = 2
-    ExplicitLeft = 136
-    ExplicitTop = 258
     object Button1: TButton
       Left = 11
       Top = 3

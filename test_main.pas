@@ -41,15 +41,11 @@ uses
   uCalendar, uSettings, uWildCards, uGetVersion;
 
 procedure Tgsm2gd_main.Button1Click(Sender: TObject);
-var
-  K: uSettings.TKey;
 begin
-  for K := Low( TKey ) to High( TKey ) do
-  try
-    uSettings.CheckKeyValue( K, vle.Cells[ 1, Integer( K ) ]);
+  try  uSettings.Store( uSettings.Check( vle.Strings ) );
   except on E: Exception do begin
     vle.Col := 1;
-    vle.Row := Integer( K );
+    vle.Row := E.HelpContext;
     vle.SetFocus;
     ShowMessage( E.Message );
     Exit;
@@ -78,6 +74,7 @@ begin
       end;
     end;
   end;
+  uSettings.Restore( vle.Strings );
 end;
 
 { TValueListEditor }
@@ -92,7 +89,7 @@ procedure Tgsm2gd_main.vleEditButtonClick(Sender: TObject);
       if not uWildCards.PopUp( LValue ) then
         Exit;
       try
-        uSettings.CheckKeyValue( TKey.WildCards, LValue );
+        uSettings.CheckValue( TKey.WildCards, LValue );
         vle.Cells[ 1, vle.Row ] := LValue;
         Exit;
       except on E: Exception do

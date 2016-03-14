@@ -32,16 +32,24 @@ const
 
 var
   KeyName: array [ TKey ] of String;
-  WildCardsArray: array of Record FilePrefix, NomenPrefix: String end;
-  NDelay, NRetryDelay: Integer;
-  ThisDate: TDateTime;
+  arWildCards: array of Record FilePrefix, NomenPrefix: String end;
+  nDelay, nRetryDelay: Integer;
+  bOneDay: Boolean;
+  dtDate: TDateTime;
+  IniName: String;
+
+procedure CheckValue( AKey: TKey; AValue: String ); //WildCards edit
+
+function Check( AValues: TStrings ): TStrings;
+procedure Store( AValues: TStrings );
+function Restore( AValues: TStrings ): TStrings;
 
 
-procedure CheckKeyValue( AKey: TKey; AValue: String );
 
 implementation/////////////////////////////////////////////////
 uses
-  System.TypInfo, System.StrUtils, System.SysUtils, System.IOUtils, System.Math;
+  System.TypInfo, System.StrUtils, System.SysUtils, System.IOUtils, System.Math,
+  System.IniFiles;
 
 procedure Init;
 var
@@ -49,6 +57,7 @@ var
 begin
   for K := Low( TKey ) to High( TKey ) do
     KeyName[ K ] := GetEnumName( TypeInfo( TKey ), Ord( K ) );
+  IniName :=  TPath.ChangeExtension( ParamStr( 0 ), '.ini' );
 end;
 
 
@@ -82,9 +91,9 @@ begin
         raise Exception.Create( 'Повторение начала имени файла.' );
     end;
 
-    SetLength( WildCardsArray, Count );
+    SetLength( arWildCards, Count );
     for I := 0 to Count-1 do
-    with WildCardsArray[ I ] do begin
+    with arWildCards[ I ] do begin
       FilePrefix := Names[ I ];
       NomenPrefix := ValueFromIndex[ I ];
     end;
@@ -98,8 +107,7 @@ begin
   Result := TryStrToInt( AValue, N ) and InRange( N, RangeMin, RangeMax );
 end;
 
-// Warning: Check Date only when OneDay is True
-procedure CheckKeyValue( AKey: TKey; AValue: String );
+procedure CheckValue( AKey: TKey; AValue: String );
 var
   K: TKey absolute AKey;
 begin
@@ -128,7 +136,7 @@ begin
 //    OneDay: begin
 //    end;
 
-    Date: if not TryStrToDate( AValue, ThisDate ) then
+    Date: if not TryStrToDate( AValue, dtDate ) then
       raise EArgumentException.CreateFmtHelp( '%s не действительна!', [ KeyDesc[ K ] ], Integer( K ) );
 
     RetryDelay: if not ParseDelay( AValue, 0, 120, NRetryDelay )  then
@@ -139,6 +147,47 @@ begin
   end;
 end;
 
+// Warning: Check Date only when OneDay is True;
+function Check( AValues: TStrings ): TStrings;
+var
+  K: TKey;
+begin
+  Result := AValues;
+  for K := Low( TKey ) to High( TKey ) do
+  if ( K <> Date ) or bOneDay then
+    CheckValue( K, AValues.ValueFromIndex[ Integer( K ) ]);
+end;
+
+procedure Store( AValues: TStrings );
+var
+  I: Integer;
+begin
+  with TIniFile.Create( TPath.ChangeExtension( ParamStr( 0 ), '.ini' ) ) do
+  try
+    for I := 0 to AValues.Count-1 do
+      WriteString( 'Settings', AValues.Names[ I ], AValues.ValueFromIndex[ I ] );
+  finally Free;
+  end;
+end;
+
+function Restore( AValues: TStrings ): TStrings;
+var
+  K: TKey;
+begin
+  if TFile.Exists( IniName ) then
+  with TIniFile.Create( IniName ) do
+  try
+    AValues.BeginUpdate;
+    try
+      AValues.Clear;
+      for K := Low( TKey ) to High( TKey ) do
+        AValues.Add( KeyName[ K ] + '=' + ReadString( 'Settings', KeyName[ K ], '' ) );
+    finally
+      AValues.EndUpdate;
+    end;
+  finally Free;
+  end;
+end;
 
 initialization
   Init;

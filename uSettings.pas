@@ -158,6 +158,9 @@ begin
     CheckValue( K, AValues.ValueFromIndex[ Integer( K ) ]);
 end;
 
+const
+  SS = 'Settings';
+
 procedure Store( AValues: TStrings );
 var
   I: Integer;
@@ -165,7 +168,7 @@ begin
   with TIniFile.Create( TPath.ChangeExtension( ParamStr( 0 ), '.ini' ) ) do
   try
     for I := 0 to AValues.Count-1 do
-      WriteString( 'Settings', AValues.Names[ I ], AValues.ValueFromIndex[ I ] );
+      WriteString( SS, AValues.Names[ I ], AValues.ValueFromIndex[ I ] );
   finally Free;
   end;
 end;
@@ -173,16 +176,26 @@ end;
 function Restore( AValues: TStrings ): TStrings;
 var
   K: TKey;
+  L: TStringList;
 begin
   Result := AValues;
-  if TFile.Exists( IniName ) then
   with TIniFile.Create( IniName ) do
   try
+
+    L := TStringList.Create;
+    with L do
+    try
+      ReadSections( L );
+      if IndexOf( SS ) < 0 then
+        Exit;
+    finally Free;
+    end;
+
     AValues.BeginUpdate;
     try
       AValues.Clear;
       for K := Low( TKey ) to High( TKey ) do
-        AValues.Add( KeyName[ K ] + '=' + ReadString( 'Settings', KeyName[ K ], '' ) );
+        AValues.Add( KeyName[ K ] + '=' + ReadString( SS, KeyName[ K ], '' ) );
     finally
       AValues.EndUpdate;
     end;
